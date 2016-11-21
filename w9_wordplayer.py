@@ -1,67 +1,50 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 10 17:01:23 2016
+# AUTHOR Wenpeng Wang wpwang@bu.edu
+# AUTHOR Yuxuan Su suyuxuan@bu.edu
+# AUTHOR Yihan Li liyihan@bu.edu
 
-@author: NelsonWang
-"""
-from itertools import combinations, permutations
+from itertools import combinations
 from sys import argv, exit
 
 script, dataset = argv
 library = dict()
 f = open(argv[1], 'r')
-# read file into dict library
-while True:
-    line = f.readline()
-    line = line.strip('\n')
+
+l = f.read()
+for line in l.split():
     temp = sorted(line)
     for letter in temp:
         key = ''.join(temp)
     library.setdefault(key, [])
-    # key in library is alphabetical order of line
     library[key].append(line)
-    if not line:
+
+while True:
+    result = list()
+    line = input()
+    x = line.split()
+    a, b = x[0], int(x[1])
+    if b == 0:
         break
+    temp2 = sorted(a)
 
-for item in library:
-    print(item, library[item])
+    if b < len(temp2) / 4 or b > 3 * len(temp2) / 4:
+        for letter in temp2:
+            word = ''.join(temp2)
+            keylist = combinations(word, b)
+            klist = list(set(keylist))
 
+        for index in klist:
+            if (''.join(index)) in library:
+                result.extend(library[''.join(index)])
+    else:
+        for key in library:
+            temp3 = sorted(a)
+            if len(key) == b:
+                for i in key:
+                    if temp3.count(i) != 0:
+                        temp3.remove(i)
+                    if len(temp3) == len(temp2) - b:
+                        result.extend(library[''.join(key)])
 
-# read input
-line = input()
-x = line.split(' ')
-wordInput, wordLength = x[0], int(x[1])
-# sort wordInput into alphabetical order in order to get from library
-tempInputSorted = sorted(wordInput)
-
-for letter in tempInputSorted:
-    word = ''.join(tempInputSorted)
-# raise Error if wordLength is bigger than word length
-if len(word) < wordLength:
-    raise ValueError
-# all the combinations C(wordLength/word length)
-keylist = permutations(word, wordLength)
-klist = []
-
-for item1 in keylist:
-    klist.append(''.join(item1))
-"""
-print (klist)
-print (".")
-"""
-for item2 in klist:
-    while True:
-        if klist.count(item2) == 1:
-            break
-        klist.remove(item2)
-"""
-for item2 in klist:
-    print(item2)
-"""
-for item2 in klist:
-    if library.get(item2, default=None) is not None:
-        print(library.values(item2))
-
-print(".")
-
-exit(0)
+    if result:
+        print(('\n'.join(sorted(result))))
+    print('.')
